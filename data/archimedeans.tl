@@ -17,7 +17,6 @@
 
 -->
 
-
 <tiling-library name="Archimedeans">
     
     <tiling name="3.3.3.3.3.3">
