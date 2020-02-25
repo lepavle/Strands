@@ -2,7 +2,8 @@
 
 #include "ofMain.h"
 
-#include <tinyxml2.h>
+#include "ArchimedeanTiling.hpp"
+
 
 class ofApp : public ofBaseApp{
 
@@ -25,7 +26,6 @@ class ofApp : public ofBaseApp{
     
     private:
     
-        ofPath tiling_path;
-        std::vector<ofPath> tile_paths;
+        ofMesh current_tiling;
 		
 };

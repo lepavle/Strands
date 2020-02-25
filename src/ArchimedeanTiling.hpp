@@ -10,11 +10,13 @@
 
 #include <stdio.h>
 
-#include <vector>
+#include <tinyxml2.h>
 
-#include <glm/mat3x3.hpp>
-#include <glm/vec2.hpp>
-#include <glm/vec3.hpp>
+#include <iostream>
+#include <vector>
+#include <string>
+
+#include "ofMain.h"
 
 #include "Tile.hpp"
 
@@ -26,14 +28,19 @@ public:
     ArchimedeanTiling(const char* type);
     
     void fill(int width, int height);
+
+public:
     
-    void setTranslations(glm::vec2 a, glm::vec2 b);
-    void setTransformations(std::vector<glm::mat3> T_mats);
+    static Tile getRegularTile(int num_sides);
     
 private:
     
     std::vector<Tile> tiles;
-        
+    
+    void setTranslations(glm::vec2 a, glm::vec2 b);
+    void setTransformations(std::vector<glm::mat3> T_mats);
+    
+    void getTilingData(const char* type);
 };
 
 #endif /* ArchimedeanTiling_hpp */
