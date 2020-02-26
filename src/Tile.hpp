@@ -25,17 +25,23 @@ public:
     
     Tile& operator=(const Tile& other)
     {
-        this->vertices = other.getVertices();
+        this->vertices = other.vertices;
+        this->T = other.T;
         return *this;
     }
     
     std::vector<glm::vec2> getVertices() const { return vertices; }
     
-    void applyAffineTransformation(glm::mat3 T);
+    void translate(glm::vec2 T);
+    
+    void setAffineTransformation(glm::mat3 T) { this->T = T; }
+    
+    void applyAffineTransformation();
     
 private:
     
     std::vector<glm::vec2> vertices;
+    glm::mat3 T;
 };
 
 #endif /* Tile_hpp */

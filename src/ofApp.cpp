@@ -3,9 +3,10 @@
 #include <filesystem>
 
 //--------------------------------------------------------------
-void ofApp::setup(){    
-    ArchimedeanTiling tiling("3.3.3.3.3.3");
-    tiling.fill(0,0);
+void ofApp::setup(){
+    // ArchimedeanTiling tiling("3.3.3.3.3.3");
+    ArchimedeanTiling tiling("4.6.12");
+    tiling.fill(100,100);
     tilingMesh = tiling.getMesh();
 }
 

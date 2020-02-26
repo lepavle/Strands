@@ -20,19 +20,26 @@ void ArchimedeanTiling::fill(int width, int height)
     mesh.setMode(OF_PRIMITIVE_LINES);
     mesh.enableColors();
     
-    for(auto tile : tiles)
+    double sc = 25;
+    
+    for(int i = 0; i < width; ++i)
     {
-        std::vector<glm::vec2> vertices = tile.getVertices();
-        for(int i = 0; i < vertices.size(); ++i)
+        for(int j = 0; j < height; ++j)
         {
-            glm::vec2 m(100,100);
-            glm::vec2 a = 10*vertices[i] + m;
-            glm::vec2 b = 10*vertices[(i+1)%vertices.size()] + m;
-            mesh.addVertex(ofVec3f(a));
-            mesh.addVertex(ofVec3f(b));
-            std::cout << a << std::endl;
-            std::cout << b << std::endl;
-            std::cout << std::endl;
+            for(auto tile : tiles)
+            {
+                Tile modified = tile;
+                modified.applyAffineTransformation();
+                modified.translate((i*A + j*B));
+                std::vector<glm::vec2> vertices = modified.getVertices();
+                for(int i = 0; i < vertices.size(); ++i)
+                {
+                    glm::vec2 a = sc*vertices[i];
+                    glm::vec2 b = sc*vertices[(i+1)%vertices.size()];
+                    mesh.addVertex(ofVec3f(a));
+                    mesh.addVertex(ofVec3f(b));
+                }
+            }
         }
     }
     
@@ -122,7 +129,7 @@ void ArchimedeanTiling::readTilingData(const char* type)
                     std::vector<glm::vec2> vertices = getRegularPolygon(numSides);
 
                     Tile tile(vertices);
-                    tile.applyAffineTransformation(T);
+                    tile.setAffineTransformation(T);
                     tiles.push_back(tile);
                       
                     // get next transform

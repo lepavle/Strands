@@ -7,7 +7,19 @@
 
 #include "Tile.hpp"
 
-void Tile::applyAffineTransformation(glm::mat3 T)
+void Tile::translate(glm::vec2 T)
+{
+    std::vector<glm::vec2> translatedVertices;
+
+    for(auto v : vertices)
+    {
+        translatedVertices.push_back(v + T);
+    }
+    
+    vertices = translatedVertices;
+}
+
+void Tile::applyAffineTransformation()
 {
     std::vector<glm::vec2> transformedVertices;
     
