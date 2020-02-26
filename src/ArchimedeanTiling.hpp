@@ -28,19 +28,24 @@ public:
     ArchimedeanTiling(const char* type);
     
     void fill(int width, int height);
+    
+    ofMesh getMesh() { return mesh; }
 
 public:
     
-    static Tile getRegularTile(int num_sides);
+    static std::vector<glm::vec2> getRegularPolygon(int numSides);
     
 private:
     
+    void readTilingData(const char* type);
+    
+private:
+    
+    ofMesh mesh;
+    
     std::vector<Tile> tiles;
     
-    void setTranslations(glm::vec2 a, glm::vec2 b);
-    void setTransformations(std::vector<glm::mat3> T_mats);
-    
-    void getTilingData(const char* type);
+    glm::vec2 A, B;
 };
 
 #endif /* ArchimedeanTiling_hpp */

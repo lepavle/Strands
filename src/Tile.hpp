@@ -12,16 +12,16 @@
 
 #include <vector>
 
-#include <glm/mat3x3.hpp>
-#include <glm/vec2.hpp>
-#include <glm/vec3.hpp>
+#include "ofMain.h"
+
+// debug
+#include <iostream>
 
 class Tile
 {
 public:
     
-    Tile(std::vector<glm::vec2> vertices) : vertices(vertices) { }
-    Tile(std::vector<glm::vec2> vertices, glm::mat3 T) : vertices(vertices), T(T) { }
+    Tile(std::vector<glm::vec2> vertices) : vertices(vertices){ }
     
     Tile& operator=(const Tile& other)
     {
@@ -31,10 +31,11 @@ public:
     
     std::vector<glm::vec2> getVertices() const { return vertices; }
     
+    void applyAffineTransformation(glm::mat3 T);
+    
 private:
     
     std::vector<glm::vec2> vertices;
-    glm::mat3 T;
 };
 
 #endif /* Tile_hpp */

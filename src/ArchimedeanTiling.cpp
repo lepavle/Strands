@@ -11,22 +11,50 @@ using namespace tinyxml2;
 
 ArchimedeanTiling::ArchimedeanTiling(const char* type)
 {
-    getTilingData(type);
+    readTilingData(type);
 }
 
-void ArchimedeanTiling::getTilingData(const char* type)
+void ArchimedeanTiling::fill(int width, int height)
 {
-    bool debug = false;
+    ofMesh mesh;
+    mesh.setMode(OF_PRIMITIVE_LINES);
+    mesh.enableColors();
+    
+    for(auto tile : tiles)
+    {
+        std::vector<glm::vec2> vertices = tile.getVertices();
+        for(int i = 0; i < vertices.size(); ++i)
+        {
+            glm::vec2 m(100,100);
+            glm::vec2 a = 10*vertices[i] + m;
+            glm::vec2 b = 10*vertices[(i+1)%vertices.size()] + m;
+            mesh.addVertex(ofVec3f(a));
+            mesh.addVertex(ofVec3f(b));
+            std::cout << a << std::endl;
+            std::cout << b << std::endl;
+            std::cout << std::endl;
+        }
+    }
+    
+    this->mesh = mesh;
+}
+
+void ArchimedeanTiling::readTilingData(const char* type)
+{
+    bool debug = true;
+    
+    // vector of tiles
+    std::vector<Tile> tiles;
     
     // load xml file
-    XMLDocument archimedeans_xml;
-    if(archimedeans_xml.LoadFile("/Users/pavsimono/workspace/of_v0.11.0_osx_release/apps/myApps/Strands/data/archimedeans.tl") != XML_SUCCESS)
+    XMLDocument archimedeansXML;
+    if(archimedeansXML.LoadFile("/Users/pavsimono/workspace/of_v0.11.0_osx_release/apps/myApps/Strands/data/archimedeans.tl") != XML_SUCCESS)
     {
         std::cout << "failed to load archimedeans.tl" << std::endl;
         return;
     }
     
-    XMLElement *root = archimedeans_xml.RootElement();
+    XMLElement *root = archimedeansXML.RootElement();
     
     // loop through tilings
     XMLElement *tiling = root->FirstChildElement();
@@ -43,31 +71,35 @@ void ArchimedeanTiling::getTilingData(const char* type)
             XMLElement *trans_a = translations->FirstChildElement();
             XMLElement *trans_b = trans_a->NextSiblingElement();
             
-            double a_x = std::stod(trans_a->FindAttribute("x")->Value());
-            double a_y = std::stod(trans_a->FindAttribute("y")->Value());
+            double A_x = std::stod(trans_a->FindAttribute("x")->Value());
+            double A_y = std::stod(trans_a->FindAttribute("y")->Value());
             
-            double b_x = std::stod(trans_b->FindAttribute("x")->Value());
-            double b_y = std::stod(trans_b->FindAttribute("y")->Value());
+            double B_x = std::stod(trans_b->FindAttribute("x")->Value());
+            double B_y = std::stod(trans_b->FindAttribute("y")->Value());
             
+            this->A = glm::vec2(A_x, A_y);
+            this->B = glm::vec2(B_x, B_y);
+                        
             if(debug)
             {
                 // print translation vectors
-                std::cout << "a : " << a_x << " " << a_y << std::endl;
-                std::cout << "b : " << b_x << " " << b_y << std::endl;
+                std::cout << "a : " << A_x << " " << A_y << std::endl;
+                std::cout << "b : " << B_x << " " << B_y << std::endl;
             }
-                
-            // get tiles
+            
+            // get tiles in patch
             XMLElement *tile = translations->NextSiblingElement();
             while(tile)
             {
                 // get tile shape
                 XMLElement *shape = tile->FirstChildElement();
                 // get num sides of tile
-                int num_sides = std::stoi(shape->FindAttribute("sides")->Value());
+                int numSides = std::stoi(shape->FindAttribute("sides")->Value());
                 
-                if(debug) std::cout << "num_sides : " << num_sides << std::endl;
+                if(debug) std::cout << "num_sides : " << numSides << std::endl;
                 
                 // get transforms of tile
+                // for each transformation, we yield a tile with the current shape
                 XMLElement *transform = shape->NextSiblingElement();
                 while(transform)
                 {
@@ -78,7 +110,7 @@ void ArchimedeanTiling::getTilingData(const char* type)
                     d = std::stod(transform->FindAttribute("d")->Value());
                     e = std::stod(transform->FindAttribute("e")->Value());
                     f = std::stod(transform->FindAttribute("f")->Value());
-                    double T_arr[9] = { a, b, c, d, e, f, 0, 0, 1 }; // row-wise
+                    double T_arr[9] = { a, b, c, d, e, f, 0, 0, 1 };
                     glm::mat3 T = glm::transpose(glm::make_mat3(T_arr));
                     
                     if(debug) {
@@ -86,6 +118,12 @@ void ArchimedeanTiling::getTilingData(const char* type)
                         std::cout << "transform : " << std::endl;
                         std::cout << T << std::endl << std::endl;
                     }
+                    
+                    std::vector<glm::vec2> vertices = getRegularPolygon(numSides);
+
+                    Tile tile(vertices);
+                    tile.applyAffineTransformation(T);
+                    tiles.push_back(tile);
                       
                     // get next transform
                     transform = transform->NextSiblingElement();
@@ -94,27 +132,32 @@ void ArchimedeanTiling::getTilingData(const char* type)
                 // get next tile
                 tile = tile->NextSiblingElement();
             }
+            
+            this->tiles = tiles;
+            
             return;
         }
-        
-        // go to next tiling definition
-        tiling = tiling->NextSiblingElement();
+        else
+        {
+            // go to next tiling
+            tiling = tiling->NextSiblingElement();
+        }
     }
 }
 
-Tile ArchimedeanTiling::getRegularTile(int num_sides)
+std::vector<glm::vec2> ArchimedeanTiling::getRegularPolygon(int numSides)
 {
-    std::vector<glm::vec2> vertices(num_sides);
+    std::vector<glm::vec2> vertices;
 
     double pi = 3.14159265358979323846264;
 
-    for( int idx = 0; idx < num_sides; ++idx ) {
-        double angle = (pi / num_sides) * ( 2 * idx + 1 );
-        double sc = 1.0 / std::cos( pi / num_sides );
+    for( int idx = 0; idx < numSides; ++idx ) {
+        double angle = (pi / numSides) * ( 2 * idx + 1 );
+        double sc = 1.0 / std::cos( pi / numSides );
         double x = sc * std::cos( angle );
         double y = sc * std::sin( angle );
-        vertices[ idx ] = glm::vec2( x , y );
+        vertices.push_back(glm::vec2( x , y ));
     }
     
-    return Tile(vertices);
+    return vertices;
 }

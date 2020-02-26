@@ -3,11 +3,10 @@
 #include <filesystem>
 
 //--------------------------------------------------------------
-void ofApp::setup(){
-    current_tiling.setMode(OF_PRIMITIVE_LINES);
-    current_tiling.enableColors();
-    
+void ofApp::setup(){    
     ArchimedeanTiling tiling("3.3.3.3.3.3");
+    tiling.fill(0,0);
+    tilingMesh = tiling.getMesh();
 }
 
 //--------------------------------------------------------------
@@ -17,7 +16,7 @@ void ofApp::update(){
 
 //--------------------------------------------------------------
 void ofApp::draw(){
-    current_tiling.draw();
+    tilingMesh.draw();
 }
 
 //--------------------------------------------------------------

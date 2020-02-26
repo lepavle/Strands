@@ -26,6 +26,6 @@ class ofApp : public ofBaseApp{
     
     private:
     
-        ofMesh current_tiling;
+        ofMesh tilingMesh;
 		
 };
