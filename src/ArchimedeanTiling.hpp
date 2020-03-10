@@ -29,11 +29,13 @@ public:
     
     void fill(int width, int height);
     
-    ofMesh getMesh() { return mesh; }
+    ofPath getPath() { return tilingPath; }
+    
+    std::vector<Tile> getTiles() { return tiles; }
 
 public:
     
-    static std::vector<glm::vec2> getRegularPolygon(int numSides);
+    static Tile getRegularPolygon(int numSides);
     
 private:
     
@@ -41,7 +43,7 @@ private:
     
 private:
     
-    ofMesh mesh;
+    ofPath tilingPath;
     
     std::vector<Tile> tiles;
     

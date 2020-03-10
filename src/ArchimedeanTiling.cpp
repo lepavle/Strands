@@ -16,34 +16,44 @@ ArchimedeanTiling::ArchimedeanTiling(const char* type)
 
 void ArchimedeanTiling::fill(int width, int height)
 {
-    ofMesh mesh;
-    mesh.setMode(OF_PRIMITIVE_LINES);
-    mesh.enableColors();
+    ofPath tilingPath;
+    tilingPath.setStrokeColor(ofColor::black);
+    tilingPath.setFillColor(ofColor::white);
+    tilingPath.setStrokeWidth(3);
     
     double sc = 25;
     
-    for(int i = 0; i < width; ++i)
+    int num_horizontal = width;
+    int num_vertical = height;
+    
+    ofColor color;
+    
+    for(int i = -num_horizontal; i < num_horizontal; ++i)
     {
-        for(int j = 0; j < height; ++j)
+        for(int j = -num_vertical; j < num_vertical; ++j)
         {
             for(auto tile : tiles)
             {
+                tilingPath.newSubPath();
+
                 Tile modified = tile;
                 modified.applyAffineTransformation();
-                modified.translate((i*A + j*B));
+                modified.scale(sc);
+                modified.translate(sc*i*A + sc*j*B + glm::vec2(200,200));
                 std::vector<glm::vec2> vertices = modified.getVertices();
-                for(int i = 0; i < vertices.size(); ++i)
+                                
+                tilingPath.moveTo(vertices[0]);
+                for(int i = 1; i < vertices.size(); ++i)
                 {
-                    glm::vec2 a = sc*vertices[i];
-                    glm::vec2 b = sc*vertices[(i+1)%vertices.size()];
-                    mesh.addVertex(ofVec3f(a));
-                    mesh.addVertex(ofVec3f(b));
+                    glm::vec2 a = vertices[i % vertices.size()];
+                    tilingPath.lineTo(a);
                 }
+                tilingPath.close();
             }
         }
     }
-    
-    this->mesh = mesh;
+        
+    this->tilingPath = tilingPath;
 }
 
 void ArchimedeanTiling::readTilingData(const char* type)
@@ -125,10 +135,8 @@ void ArchimedeanTiling::readTilingData(const char* type)
                         std::cout << "transform : " << std::endl;
                         std::cout << T << std::endl << std::endl;
                     }
-                    
-                    std::vector<glm::vec2> vertices = getRegularPolygon(numSides);
 
-                    Tile tile(vertices);
+                    Tile tile = getRegularPolygon(numSides);
                     tile.setAffineTransformation(T);
                     tiles.push_back(tile);
                       
@@ -141,7 +149,7 @@ void ArchimedeanTiling::readTilingData(const char* type)
             }
             
             this->tiles = tiles;
-            
+                        
             return;
         }
         else
@@ -152,7 +160,7 @@ void ArchimedeanTiling::readTilingData(const char* type)
     }
 }
 
-std::vector<glm::vec2> ArchimedeanTiling::getRegularPolygon(int numSides)
+Tile ArchimedeanTiling::getRegularPolygon(int numSides)
 {
     std::vector<glm::vec2> vertices;
 
@@ -166,5 +174,5 @@ std::vector<glm::vec2> ArchimedeanTiling::getRegularPolygon(int numSides)
         vertices.push_back(glm::vec2( x , y ));
     }
     
-    return vertices;
+    return Tile(vertices);
 }

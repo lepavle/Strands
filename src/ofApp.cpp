@@ -6,8 +6,8 @@
 void ofApp::setup(){
     // ArchimedeanTiling tiling("3.3.3.3.3.3");
     ArchimedeanTiling tiling("4.6.12");
-    tiling.fill(100,100);
-    tilingMesh = tiling.getMesh();
+    tiling.fill(30,30);
+    tilingPath = tiling.getPath();
 }
 
 //--------------------------------------------------------------
@@ -17,7 +17,7 @@ void ofApp::update(){
 
 //--------------------------------------------------------------
 void ofApp::draw(){
-    tilingMesh.draw();
+    tilingPath.draw();
 }
 
 //--------------------------------------------------------------

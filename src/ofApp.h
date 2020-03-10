@@ -26,6 +26,7 @@ class ofApp : public ofBaseApp{
     
     private:
     
-        ofMesh tilingMesh;
+        ofPath tilingPath;
+        int timestep = 0;
 		
 };
