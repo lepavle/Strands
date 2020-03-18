@@ -2,8 +2,7 @@
 
 #include "ofMain.h"
 
-#include "ArchimedeanTiling.hpp"
-
+#include "StarPattern.hpp"
 
 class ofApp : public ofBaseApp{
 

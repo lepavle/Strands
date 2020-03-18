@@ -9,6 +9,11 @@
 
 Tile::Tile(std::vector<glm::vec2> vertices) : vertices(vertices)
 {
+    updateEdges();
+}
+
+void Tile::updateEdges()
+{
     std::vector<std::pair<glm::vec2, glm::vec2>> edges;
     for(int i = 0; i < vertices.size(); ++i)
     {
@@ -17,6 +22,23 @@ Tile::Tile(std::vector<glm::vec2> vertices) : vertices(vertices)
         edges.push_back(edge);
     }
     this->edges = edges;
+}
+
+void Tile::draw()
+{
+    updateEdges();
+    
+    ofPath tilePath;
+    tilePath.setStrokeColor(ofColor::white);
+    tilePath.setStrokeWidth(3);
+    tilePath.moveTo(vertices[0]);
+    for(int i = 1; i < vertices.size(); ++i)
+    {
+        glm::vec2 a = vertices[i % vertices.size()];
+        tilePath.lineTo(a);
+    }
+    tilePath.close();
+    tilePath.draw();
 }
 
 void Tile::translate(glm::vec2 T)
@@ -55,9 +77,4 @@ void Tile::applyAffineTransformation()
     }
     
     vertices = transformedVertices;
-}
-
-void Tile::setColor(ofColor color)
-{
-    this->color = color;
 }

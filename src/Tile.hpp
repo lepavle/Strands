@@ -18,6 +18,8 @@
 #include <iostream>
 #include <utility>
 
+typedef std::pair< glm::vec2, glm::vec2 > Edge;
+
 class Tile
 {
     
@@ -40,7 +42,8 @@ public:
     std::vector<glm::vec2> getVertices() { return vertices; }
     
     int numEdges() { return edges.size(); }
-    std::vector< std::pair< glm::vec2 , glm::vec2> > getEdges() { return edges; }
+    std::vector<Edge> getEdges() { return edges; }
+    void updateEdges();
 
 public:
     
@@ -50,12 +53,14 @@ public:
     void setAffineTransformation(glm::mat3 T) { this->T = T; }
     
     void applyAffineTransformation();
-    void setColor(ofColor color);
+    void setColor(ofColor color) { this->color = color; }
+    
+    void draw();
     
 private:
     
     std::vector<glm::vec2> vertices;
-    std::vector< std::pair< glm::vec2 , glm::vec2 > > edges;
+    std::vector<Edge> edges;
     glm::mat3 T;
     ofColor color;
     

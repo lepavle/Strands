@@ -34,11 +34,17 @@ void StarPattern::generateStarPatternOfTile(Tile tile)
     /* For each edge, define a pair of (normalized) rays
      * determined by the given contact angle.
      */
-    auto edges = tile.getEdges();
-    std::vector< std::pair< glm::vec2, glm::vec2 > > rays;
     
     double pi = 3.14159265358979323846264;
     
+    std::vector<Edge> rays = getRaysOfTile(tile, pi/2);
+}
+
+std::vector<Edge> StarPattern::getRaysOfTile(Tile tile, double contactAngle)
+{
+    std::vector<Edge> edges = tile.getEdges();
+    std::vector<Edge> rays;
+
     for(auto edge : edges)
     {
         glm::vec2 a = edge.first;
@@ -46,17 +52,15 @@ void StarPattern::generateStarPatternOfTile(Tile tile)
         
         glm::vec2 midpt = a + .5*(b - a);
         
-        // get first ray
-        glm::vec2 axis = b - a;
-        glm::vec2 r1, r2;
+        Edge r1 = utils::rotateEdge(edge, contactAngle/2);
+        r1.first += .5*(b-a);
+        r1.second += .5*(b-a);
         
-        r1.x = axis.x * cos(contactAngle) - axis.y * sin(contactAngle);
-        r1.y = axis.x * sin(contactAngle) + axis.y * cos(contactAngle);
-        
-        // normalize
-        r1 /= r1.length();
+        rays.push_back(r1);
         
         // rotate to get second ray
-        float rayTheta = 2*pi - contactAngle;
+        float rayTheta = 2*M_PI - contactAngle;
     }
+    
+    return rays;
 }

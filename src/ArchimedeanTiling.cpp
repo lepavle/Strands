@@ -164,11 +164,9 @@ Tile ArchimedeanTiling::getRegularPolygon(int numSides)
 {
     std::vector<glm::vec2> vertices;
 
-    double pi = 3.14159265358979323846264;
-
     for( int idx = 0; idx < numSides; ++idx ) {
-        double angle = (pi / numSides) * ( 2 * idx + 1 );
-        double sc = 1.0 / std::cos( pi / numSides );
+        double angle = (M_PI / numSides) * ( 2 * idx + 1 );
+        double sc = 1.0 / std::cos( M_PI / numSides );
         double x = sc * std::cos( angle );
         double y = sc * std::sin( angle );
         vertices.push_back(glm::vec2( x , y ));

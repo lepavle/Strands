@@ -10,25 +10,29 @@
 
 #include <stdio.h>
 
+#include "utils.hpp"
+
 #include "ArchimedeanTiling.hpp"
+
+#include "StarPattern.hpp"
 
 class StarPattern
 {
     
 public:
     
-    StarPattern(ArchimedeanTiling baseTiling, double contactAngle) :
-    baseTiling(baseTiling), contactAngle(contactAngle) { };
+    StarPattern(ArchimedeanTiling baseTiling) : baseTiling(baseTiling) { };
 
-private:
-
+public:
+    
     void generateStarPattern();
     void generateStarPatternOfTile(Tile tile);
+    
+    static std::vector<Edge> getRaysOfTile(Tile tile, double contactAngle);
     
 private:
     
     ArchimedeanTiling baseTiling;
-    float contactAngle;
     
 private:
     

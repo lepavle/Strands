@@ -20,6 +20,8 @@
 
 #include "Tile.hpp"
 
+#include <math.h>
+
 class ArchimedeanTiling
 {
     
