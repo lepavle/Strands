@@ -60,6 +60,12 @@ std::vector<Edge> StarPattern::getRaysOfTile(Tile tile, double contactAngle)
         
         // rotate to get second ray
         float rayTheta = 2*M_PI - contactAngle;
+        
+        Edge r2 = utils::rotateEdge(edge, (2*M_PI - contactAngle)/2);
+        r2.first += .5*(b-a);
+        r2.second += .5*(b-a);
+        
+        rays.push_back(r2);
     }
     
     return rays;
