@@ -5,11 +5,12 @@
 //--------------------------------------------------------------
 void ofApp::setup(){
     // ArchimedeanTiling tiling("3.3.3.3.3.3");
-    /*
     ArchimedeanTiling tiling("4.6.12");
     tiling.fill(30,30);
     tilingPath = tiling.getPath();
-     */
+    StarPattern starPattern(tiling);
+    starPattern.generateStarPattern();
+    this->starPattern = starPattern;
 }
 
 //--------------------------------------------------------------
@@ -19,13 +20,17 @@ void ofApp::update(){
 
 //--------------------------------------------------------------
 void ofApp::draw(){
+    /*
     Tile tile = ArchimedeanTiling::getRegularPolygon(5);
     tile.scale(50);
     tile.translate(glm::vec2(200,200));
     tile.draw();
     std::vector<Edge> rays = StarPattern::getRaysOfTile(tile, M_PI/4);
     utils::drawEdges(rays);
-    //tilingPath.draw();
+     */
+    utils::drawEdges(starPattern.getRays());
+    // std::cout << starPattern.getRays().size() << std::endl;
+    // tilingPath.draw();
 }
 
 //--------------------------------------------------------------

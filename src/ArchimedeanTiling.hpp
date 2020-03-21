@@ -26,6 +26,8 @@ class ArchimedeanTiling
 {
     
 public:
+    
+    ArchimedeanTiling() { };
         
     ArchimedeanTiling(const char* type);
     
@@ -34,6 +36,7 @@ public:
     ofPath getPath() { return tilingPath; }
     
     std::vector<Tile> getTiles() { return tiles; }
+    std::vector<Tile> getBaseTiles() { return baseTiles; }
 
 public:
     
@@ -46,8 +49,9 @@ private:
 private:
     
     ofPath tilingPath;
-    
     std::vector<Tile> tiles;
+    
+    std::vector<Tile> baseTiles;
     
     glm::vec2 A, B;
 };

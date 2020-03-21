@@ -27,6 +27,13 @@ void StarPattern::generateStarPattern()
             baseTiles.push_back(baseTile);
         }
     }
+    std::vector<Edge> rays;
+    for(auto tile : baseTiling.getTiles())
+    {
+        auto tileRays = getRaysOfTile(tile, M_PI/4);
+        rays.insert(rays.end(), tileRays.begin(), tileRays.end());
+    }
+    this->rays = rays;
 }
 
 void StarPattern::generateStarPatternOfTile(Tile tile)
@@ -37,7 +44,7 @@ void StarPattern::generateStarPatternOfTile(Tile tile)
     
     double pi = 3.14159265358979323846264;
     
-    std::vector<Edge> rays = getRaysOfTile(tile, pi/2);
+    std::vector<Edge> rays = getRaysOfTile(tile, pi/4);
 }
 
 std::vector<Edge> StarPattern::getRaysOfTile(Tile tile, double contactAngle)
@@ -52,16 +59,14 @@ std::vector<Edge> StarPattern::getRaysOfTile(Tile tile, double contactAngle)
         
         glm::vec2 midpt = a + .5*(b - a);
         
-        Edge r1 = utils::rotateEdge(edge, contactAngle/2);
+        Edge r1 = utils::rotateEdge(edge, contactAngle);
         r1.first += .5*(b-a);
         r1.second += .5*(b-a);
         
         rays.push_back(r1);
         
-        // rotate to get second ray
-        float rayTheta = 2*M_PI - contactAngle;
-        
-        Edge r2 = utils::rotateEdge(edge, (2*M_PI - contactAngle)/2);
+        // reflect to get second ray
+        Edge r2 = utils::rotateEdge(edge, 2*M_PI - contactAngle);
         r2.first += .5*(b-a);
         r2.second += .5*(b-a);
         

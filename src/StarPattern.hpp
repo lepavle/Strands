@@ -14,13 +14,13 @@
 
 #include "ArchimedeanTiling.hpp"
 
-#include "StarPattern.hpp"
-
 class StarPattern
 {
     
 public:
     
+    StarPattern() { };
+        
     StarPattern(ArchimedeanTiling baseTiling) : baseTiling(baseTiling) { };
 
 public:
@@ -29,14 +29,18 @@ public:
     void generateStarPatternOfTile(Tile tile);
     
     static std::vector<Edge> getRaysOfTile(Tile tile, double contactAngle);
-    
+    std::vector<Edge> getRays() { return rays; }
+
 private:
     
     ArchimedeanTiling baseTiling;
     
+    std::vector<Edge> rays;
+    
 private:
     
     glm::vec2 rotate(float rad);
+    
     
 };
 

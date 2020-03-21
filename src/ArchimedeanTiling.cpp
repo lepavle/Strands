@@ -16,6 +16,8 @@ ArchimedeanTiling::ArchimedeanTiling(const char* type)
 
 void ArchimedeanTiling::fill(int width, int height)
 {
+    std::vector<Tile> tiles;
+    
     ofPath tilingPath;
     tilingPath.setStrokeColor(ofColor::black);
     tilingPath.setFillColor(ofColor::white);
@@ -32,15 +34,17 @@ void ArchimedeanTiling::fill(int width, int height)
     {
         for(int j = -num_vertical; j < num_vertical; ++j)
         {
-            for(auto tile : tiles)
+            for(auto baseTile : baseTiles)
             {
                 tilingPath.newSubPath();
 
-                Tile modified = tile;
-                modified.applyAffineTransformation();
-                modified.scale(sc);
-                modified.translate(sc*i*A + sc*j*B + glm::vec2(200,200));
-                std::vector<glm::vec2> vertices = modified.getVertices();
+                Tile tile = baseTile;
+                tile.applyAffineTransformation();
+                tile.scale(sc);
+                tile.translate(sc*i*A + sc*j*B + glm::vec2(200,200));
+                tile.updateEdges();
+                tiles.push_back(tile);
+                std::vector<glm::vec2> vertices = tile.getVertices();
                                 
                 tilingPath.moveTo(vertices[0]);
                 for(int i = 1; i < vertices.size(); ++i)
@@ -52,7 +56,8 @@ void ArchimedeanTiling::fill(int width, int height)
             }
         }
     }
-        
+    
+    this->tiles = tiles;
     this->tilingPath = tilingPath;
 }
 
@@ -60,8 +65,8 @@ void ArchimedeanTiling::readTilingData(const char* type)
 {
     bool debug = true;
     
-    // vector of tiles
-    std::vector<Tile> tiles;
+    // vector of base tiles
+    std::vector<Tile> baseTiles;
     
     // load xml file
     XMLDocument archimedeansXML;
@@ -136,9 +141,9 @@ void ArchimedeanTiling::readTilingData(const char* type)
                         std::cout << T << std::endl << std::endl;
                     }
 
-                    Tile tile = getRegularPolygon(numSides);
-                    tile.setAffineTransformation(T);
-                    tiles.push_back(tile);
+                    Tile baseTile = getRegularPolygon(numSides);
+                    baseTile.setAffineTransformation(T);
+                    baseTiles.push_back(baseTile);
                       
                     // get next transform
                     transform = transform->NextSiblingElement();
@@ -148,7 +153,7 @@ void ArchimedeanTiling::readTilingData(const char* type)
                 tile = tile->NextSiblingElement();
             }
             
-            this->tiles = tiles;
+            this->baseTiles = baseTiles;
                         
             return;
         }

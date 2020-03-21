@@ -51,6 +51,8 @@ void Tile::translate(glm::vec2 T)
     }
     
     vertices = translatedVertices;
+    
+    updateEdges();
 }
 
 void Tile::scale(float s)
@@ -63,6 +65,8 @@ void Tile::scale(float s)
     }
     
     vertices = scaledVertices;
+    
+    updateEdges();
 }
 
 void Tile::applyAffineTransformation()
@@ -77,4 +81,7 @@ void Tile::applyAffineTransformation()
     }
     
     vertices = transformedVertices;
+    
+    updateEdges();
 }
+        

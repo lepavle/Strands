@@ -15,7 +15,7 @@ void utils::drawTile(Tile tile)
 void utils::drawEdges(std::vector<Edge> edges)
 {
     ofPath path;
-    path.setStrokeColor(ofColor::black);
+    path.setStrokeColor(ofColor::white);
     path.setStrokeWidth(3);
     for(auto edge : edges)
     {
