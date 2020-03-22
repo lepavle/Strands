@@ -26,6 +26,8 @@ public:
     static Edge rotateEdge(Edge edge, float angle);
     
     static Edge translateEdge(Edge edge, glm::vec2 T);
+    
+    static float intersectRays(Edge a, Edge b);
 };
 
 #endif /* utils_hpp */

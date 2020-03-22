@@ -44,7 +44,44 @@ void StarPattern::generateStarPatternOfTile(Tile tile)
     
     double pi = 3.14159265358979323846264;
     
-    std::vector<Edge> rays = getRaysOfTile(tile, pi/4);
+    /* Inference alg */
+    inference(tile);
+}
+
+std::vector<Edge> StarPattern::inference(Tile tile)
+{
+    std::vector<Edge> rays = getRaysOfTile(tile, M_PI/4);
+    
+    int numRays = rays.size();
+    
+    // we flag a ray when it is used
+    std::vector<bool> used(numRays, 0);
+    
+    // we associated a cost with each pair of rays
+    std::map<std::pair<int,int>, float> costs;
+    
+    // pairwise ray intersection
+    for(int i = 0; i < rays.size(); ++i)
+    {
+        for(int j = 0; j < rays.size(); ++j)
+        {
+            if(i == j) continue;
+            
+            Edge ab = rays[i];
+            Edge cd = rays[j];
+            float t = utils::intersectRays( ab,  cd );
+                        
+            // point of intersection
+            glm::vec2 p = ab.first + t * (ab.second - ab.first);
+            
+            float apLen = glm::length(p - ab.first);
+            float cpLen = glm::length(p - cd.first);
+            
+            float cost = apLen + cpLen;
+            
+            costs[std::make_pair( i, j )] = cost;
+        }
+    }
 }
 
 std::vector<Edge> StarPattern::getRaysOfTile(Tile tile, double contactAngle)
@@ -75,3 +112,4 @@ std::vector<Edge> StarPattern::getRaysOfTile(Tile tile, double contactAngle)
     
     return rays;
 }
+

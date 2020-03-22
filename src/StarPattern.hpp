@@ -21,7 +21,8 @@ public:
     
     StarPattern() { };
         
-    StarPattern(ArchimedeanTiling baseTiling) : baseTiling(baseTiling) { };
+    StarPattern(ArchimedeanTiling baseTiling) : baseTiling(baseTiling)
+    { };
 
 public:
     
@@ -30,6 +31,8 @@ public:
     
     static std::vector<Edge> getRaysOfTile(Tile tile, double contactAngle);
     std::vector<Edge> getRays() { return rays; }
+    
+    std::vector<Edge> inference(Tile tile);
 
 private:
     
