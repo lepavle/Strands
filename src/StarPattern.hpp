@@ -23,23 +23,23 @@ public:
         
     StarPattern(ArchimedeanTiling baseTiling) : baseTiling(baseTiling)
     { };
+    
+public:
+    
+    std::vector<Edge> getMotifEdges() { return motifEdges; }
 
 public:
     
     void generateStarPattern();
-    void generateStarPatternOfTile(Tile tile);
+    std::vector<Edge> generateStarPatternOfTile(Tile tile);
     
     static std::vector<Edge> getRaysOfTile(Tile tile, double contactAngle);
-    std::vector<Edge> getRays() { return rays; }
     
-    std::vector<Edge> inference(Tile tile);
-
 private:
     
     ArchimedeanTiling baseTiling;
-    
-    std::vector<Edge> rays;
-    
+    std::vector<Edge> motifEdges;
+
 private:
     
     glm::vec2 rotate(float rad);

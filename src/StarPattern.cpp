@@ -13,6 +13,7 @@ void StarPattern::generateStarPattern()
      * We create one tile corresponding to each type in the
      * provided tiling and generate its motif.
      */
+    /*
     bool seen[5] = { 0 };
     for(auto tile : baseTiling.getTiles())
     {
@@ -34,9 +35,20 @@ void StarPattern::generateStarPattern()
         rays.insert(rays.end(), tileRays.begin(), tileRays.end());
     }
     this->rays = rays;
+     */
+    
+    std::vector<Edge> motifEdges;
+    int i = 0;
+    for(auto tile : baseTiling.getTiles())
+    {
+        auto motif = generateStarPatternOfTile(tile);
+        motifEdges.insert(motifEdges.end(), motif.begin(), motif.end());
+        //motifEdges.insert(motifEdges.end(), tile.getEdges().begin(), tile.getEdges().end());
+    }
+    this->motifEdges = motifEdges;
 }
 
-void StarPattern::generateStarPatternOfTile(Tile tile)
+std::vector<Edge> StarPattern::generateStarPatternOfTile(Tile tile)
 {
     /* For each edge, define a pair of (normalized) rays
      * determined by the given contact angle.
@@ -44,44 +56,99 @@ void StarPattern::generateStarPatternOfTile(Tile tile)
     
     double pi = 3.14159265358979323846264;
     
-    /* Inference alg */
-    inference(tile);
-}
-
-std::vector<Edge> StarPattern::inference(Tile tile)
-{
     std::vector<Edge> rays = getRaysOfTile(tile, M_PI/4);
     
+    tile.setRays(rays);
+        
     int numRays = rays.size();
     
-    // we flag a ray when it is used
-    std::vector<bool> used(numRays, 0);
+    // return rays;
+        
+    // cost -> ray indices
+    std::vector< std::pair<float, std::pair< int, int >> > costData;
     
-    // we associated a cost with each pair of rays
-    std::map<std::pair<int,int>, float> costs;
+    // ray pair indices -> poi
+    std::vector< std::vector<glm::vec2> > poiArr(numRays,
+                                                 std::vector<glm::vec2>(numRays));
     
+    std::vector<Edge> test;
     // pairwise ray intersection
-    for(int i = 0; i < rays.size(); ++i)
+    for(int i = 0; i < numRays; ++i)
     {
-        for(int j = 0; j < rays.size(); ++j)
+        for(int j = 0; j < numRays; ++j)
         {
             if(i == j) continue;
             
             Edge ab = rays[i];
             Edge cd = rays[j];
-            float t = utils::intersectRays( ab,  cd );
-                        
-            // point of intersection
-            glm::vec2 p = ab.first + t * (ab.second - ab.first);
             
-            float apLen = glm::length(p - ab.first);
-            float cpLen = glm::length(p - cd.first);
+            float t = utils::intersectRays( ab,  cd );
+            
+            /*
+            if(t > 0 && t < 10)
+            {
+                std::cout << "t : " << t << std::endl;
+                test.push_back(ab);
+                test.push_back(cd);
+                //return test;
+            }
+             */
+            
+            // point of intersection
+            glm::vec2 poi = ab.first + t * (ab.second - ab.first);
+            poiArr[i][j] = poi;
+            
+            float apLen = glm::length(poi - ab.first);
+            float cpLen = glm::length(poi - cd.first);
             
             float cost = apLen + cpLen;
             
-            costs[std::make_pair( i, j )] = cost;
+            if(cost == 0) continue;
+            
+            auto data = std::make_pair( cost , std::make_pair(i,j) );
+            
+            costData.push_back(data);
         }
     }
+    
+    // sort by cost
+    std::sort(costData.begin(), costData.end());
+    
+    // we flag a ray when it is used
+    std::vector<bool> used(numRays, 0);
+    int numUsed = 0;
+    
+    std::vector<Edge> motif;
+    for(auto dat : costData)
+    {
+        if(numUsed == numRays) break;
+        auto rayIndices = dat.second;
+        
+        int i = rayIndices.first;
+        int j = rayIndices.second;
+        
+        if(used[i] || used[j]) continue;
+
+        Edge ab = rays[i];
+        Edge cd = rays[j];
+        
+        // for each intersection, we add two segments
+        glm::vec2 poi = poiArr[i][j];
+        
+        Edge ap = std::make_pair(ab.first, poi);
+        Edge cp = std::make_pair(cd.first, poi);
+        
+        motif.push_back(ap);
+        //std::cout << ap.first << " " << ap.second << std::endl;
+        motif.push_back(cp);
+        
+        used[i] = true;
+        used[j] = true;
+        
+        numUsed += 2;
+    }
+    
+    return motif;
 }
 
 std::vector<Edge> StarPattern::getRaysOfTile(Tile tile, double contactAngle)
@@ -103,7 +170,7 @@ std::vector<Edge> StarPattern::getRaysOfTile(Tile tile, double contactAngle)
         rays.push_back(r1);
         
         // reflect to get second ray
-        Edge r2 = utils::rotateEdge(edge, 2*M_PI - contactAngle);
+        Edge r2 = utils::rotateEdge(edge, M_PI - contactAngle);
         r2.first += .5*(b-a);
         r2.second += .5*(b-a);
         

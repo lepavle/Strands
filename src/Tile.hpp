@@ -44,6 +44,10 @@ public:
     int numEdges() { return edges.size(); }
     std::vector<Edge> getEdges() { return edges; }
     void updateEdges();
+    
+    int numRays() { return rays.size(); }
+    std::vector<Edge> getRays() { return rays; }
+    void setRays(std::vector<Edge> rays) { this->rays = rays; }
 
 public:
     
@@ -63,6 +67,9 @@ private:
     std::vector<Edge> edges;
     glm::mat3 T;
     ofColor color;
+    
+    // motif data
+    std::vector<Edge> rays;
     
 };
 

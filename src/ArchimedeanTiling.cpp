@@ -84,10 +84,12 @@ void ArchimedeanTiling::readTilingData(const char* type)
     {
         if(strcmp(type,tiling->FindAttribute("name")->Value()) == 0)
         {
-            std::cout << "reading " << tiling->FindAttribute("name")->Value() << std::endl;
             
-            // get translation vectors
-            if(debug) std::cout << "reading translation vectors" << std::endl;
+            if(debug)
+            {
+                std::cout << "reading " << tiling->FindAttribute("name")->Value() << std::endl;
+                std::cout << "reading translation vectors" << std::endl;
+            }
             
             XMLElement *translations = tiling->FirstChildElement();
             XMLElement *trans_a = translations->FirstChildElement();
@@ -135,7 +137,8 @@ void ArchimedeanTiling::readTilingData(const char* type)
                     double T_arr[9] = { a, b, c, d, e, f, 0, 0, 1 };
                     glm::mat3 T = glm::transpose(glm::make_mat3(T_arr));
                     
-                    if(debug) {
+                    if(debug)
+                    {
                         // print transform
                         std::cout << "transform : " << std::endl;
                         std::cout << T << std::endl << std::endl;

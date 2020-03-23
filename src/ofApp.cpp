@@ -28,8 +28,8 @@ void ofApp::draw(){
     std::vector<Edge> rays = StarPattern::getRaysOfTile(tile, M_PI/4);
     utils::drawEdges(rays);
      */
-    utils::drawEdges(starPattern.getRays());
     // std::cout << starPattern.getRays().size() << std::endl;
+    utils::drawEdges(starPattern.getMotifEdges());
     // tilingPath.draw();
 }
 

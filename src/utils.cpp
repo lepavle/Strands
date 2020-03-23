@@ -59,7 +59,8 @@ float utils::intersectRays(Edge a, Edge b)
     float x4 = b.second.x;
     float y4 = b.second.y;
     
-    float top = (x1 - x3)*(y3 - y4) - (y1 - y2)*(x1 - x3);
+    float top = (x1 - x3)*(y3 - y4) - (y1 - y3)*(x3 - x4);
+    
     float bot = (x1 - x2)*(y3 - y4) - (y1 - y2)*(x3 - x4);
     
     if(bot < 1e-5) return 1e+6;
