@@ -13,8 +13,9 @@ void StarPattern::generateStarPattern()
      * We create one tile corresponding to each type in the
      * provided tiling and generate its motif.
      */
-    /*
+    
     bool seen[5] = { 0 };
+    
     for(auto tile : baseTiling.getTiles())
     {
         seen[tile.numVertices()-1] = true;
@@ -31,11 +32,9 @@ void StarPattern::generateStarPattern()
     std::vector<Edge> rays;
     for(auto tile : baseTiling.getTiles())
     {
-        auto tileRays = getRaysOfTile(tile, M_PI/4);
+        auto tileRays = getRaysOfTile(tile);
         rays.insert(rays.end(), tileRays.begin(), tileRays.end());
     }
-    this->rays = rays;
-     */
     
     std::vector<Edge> motifEdges;
     int i = 0;
@@ -56,12 +55,12 @@ std::vector<Edge> StarPattern::generateStarPatternOfTile(Tile tile)
     
     double pi = 3.14159265358979323846264;
     
-    std::vector<Edge> rays = getRaysOfTile(tile, M_PI/4);
+    std::vector<Edge> rays = getRaysOfTile(tile);
     
     tile.setRays(rays);
         
     int numRays = rays.size();
-    
+        
     // return rays;
         
     // cost -> ray indices
@@ -82,17 +81,9 @@ std::vector<Edge> StarPattern::generateStarPatternOfTile(Tile tile)
             Edge ab = rays[i];
             Edge cd = rays[j];
             
-            float t = utils::intersectRays( ab,  cd );
-            
-            /*
-            if(t > 0 && t < 10)
-            {
-                std::cout << "t : " << t << std::endl;
-                test.push_back(ab);
-                test.push_back(cd);
-                //return test;
-            }
-             */
+            float t = utils::intersectRays( ab ,  cd );
+                    
+            max_t = std::max(max_t, t);
             
             // point of intersection
             glm::vec2 poi = ab.first + t * (ab.second - ab.first);
@@ -110,6 +101,8 @@ std::vector<Edge> StarPattern::generateStarPatternOfTile(Tile tile)
             costData.push_back(data);
         }
     }
+    
+    std::cout << "MAX T : " << max_t << std::endl;
     
     // sort by cost
     std::sort(costData.begin(), costData.end());
@@ -151,7 +144,7 @@ std::vector<Edge> StarPattern::generateStarPatternOfTile(Tile tile)
     return motif;
 }
 
-std::vector<Edge> StarPattern::getRaysOfTile(Tile tile, double contactAngle)
+std::vector<Edge> StarPattern::getRaysOfTile(Tile tile)
 {
     std::vector<Edge> edges = tile.getEdges();
     std::vector<Edge> rays;

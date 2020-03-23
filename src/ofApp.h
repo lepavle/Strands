@@ -25,8 +25,14 @@ public:
 
 private:
 
+    ArchimedeanTiling tiling;
     StarPattern starPattern;
     ofPath tilingPath;
     int timestep = 0;
+    
+    float angleMin = M_PI/5;
+    float angleMax = M_PI/4;
+    float currAngle = angleMin;
+    bool increment = true;
 		
 };

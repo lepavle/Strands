@@ -5,12 +5,11 @@
 //--------------------------------------------------------------
 void ofApp::setup(){
     // ArchimedeanTiling tiling("3.3.3.3.3.3");
-    ArchimedeanTiling tiling("4.6.12");
+    // ArchimedeanTiling tiling("4.6.12");
+    ArchimedeanTiling tiling("3.3.3.4.4");
     tiling.fill(30,30);
     tilingPath = tiling.getPath();
-    StarPattern starPattern(tiling);
-    starPattern.generateStarPattern();
-    this->starPattern = starPattern;
+    this->tiling = tiling;
 }
 
 //--------------------------------------------------------------
@@ -29,7 +28,17 @@ void ofApp::draw(){
     utils::drawEdges(rays);
      */
     // std::cout << starPattern.getRays().size() << std::endl;
+    
+    StarPattern starPattern(tiling, currAngle);
+    starPattern.generateStarPattern();
+    this->starPattern = starPattern;
     utils::drawEdges(starPattern.getMotifEdges());
+    
+    if(currAngle > angleMax) increment = false;
+    if(currAngle < angleMin) increment = true;
+    
+    if(increment) currAngle += .5;
+    else currAngle -= .5;
     // tilingPath.draw();
 }
 

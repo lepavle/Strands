@@ -63,7 +63,7 @@ float utils::intersectRays(Edge a, Edge b)
     
     float bot = (x1 - x2)*(y3 - y4) - (y1 - y2)*(x3 - x4);
     
-    if(bot < 1e-5) return 1e+6;
+    if(bot == 0) return 1e+7;
     
     return top/bot;
 }

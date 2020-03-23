@@ -21,7 +21,7 @@ public:
     
     StarPattern() { };
         
-    StarPattern(ArchimedeanTiling baseTiling) : baseTiling(baseTiling)
+    StarPattern(ArchimedeanTiling baseTiling, float contactAngle) : baseTiling(baseTiling), contactAngle(contactAngle)
     { };
     
 public:
@@ -33,7 +33,9 @@ public:
     void generateStarPattern();
     std::vector<Edge> generateStarPatternOfTile(Tile tile);
     
-    static std::vector<Edge> getRaysOfTile(Tile tile, double contactAngle);
+private:
+    
+    std::vector<Edge> getRaysOfTile(Tile tile);
     
 private:
     
@@ -44,6 +46,9 @@ private:
     
     glm::vec2 rotate(float rad);
     
+    float contactAngle;
+    
+    float max_t = 0; // debug
     
 };
 
